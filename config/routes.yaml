@@ -1,3 +1,0 @@
-index:
-    path: /upfilez
-    controller: App\Controller\TransferController::index
