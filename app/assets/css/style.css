@@ -1,0 +1,46 @@
+html{size: 62.5%;}
+
+/*Heights & Witdhs*/
+.h500{height: 500px;}
+.h100p{height: 100%;}
+
+.w80p{width: 80%;}
+
+/*Backgrounds & Colors*/
+.bg-purple{background-color: #A243E8;}
+.bg-lightgray{background-color: #FAFAFA;}
+.bg-white{background-color: #FFF;}
+
+.bg-alpha0{background-color: transparent;}
+
+/*Paddings & Margins*/
+.pt-50{padding-top: 50px;}
+.pt-25{padding-top: 25px;}
+.p-10{padding: 10px;}
+
+
+.nopadding{padding: 0 !important;}
+
+/*Display*/
+.dsp-flx{display: flex;}
+.flx-col{flex-direction: column;}
+.just-ct-evenly{justify-content: space-evenly;}
+
+/*Borders*/
+.noborder{border: none;}
+
+/*Fonts*/
+.fs-25{font-size: 2.5rem;}
+
+/*Misc*/
+.btn:hover, a>i:hover{background-color: #ff56c9;}
+
+.dropify-wrapper{
+    border-style: dashed;
+    background-color: transparent;}
+
+    button:hover{
+        background-color: red;}
+
+input[type="submit"]{color: #FFF;}
+

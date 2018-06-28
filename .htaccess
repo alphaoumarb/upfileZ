@@ -1,0 +1,8 @@
+Options +FollowSymlinks
+RewriteEngine on
+RewriteBase /upfilez
+# Vérifie si il s'agit d'un répertoire ou un chemin
+RewriteCond %{SCRIPT_FILENAME} !-f
+RewriteCond %{SCRIPT_FILENAME} !-d
+# QSA oblige à combiner les paramètres GET à l'url
+RewriteRule (.*) index.php?request=$1 [QSA,L]

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+        {% block stylesheet %}
+        <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,700,900|Roboto+Condensed:400,300,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="./app/assets/css/dropify.min.css">
+<!--         <link href="http://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+ -->        <link rel="stylesheet" href="./app/assets/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <link rel="stylesheet" href="./app/assets/css/style.css">
+        {% endblock %} 
+        
+        <title>uploadfileZ</title>
+    </head>
+<body class="bg-lightgray">
+    {% include '/layout/header.html.twig' %}
+    {% block content %}
+    
+    {% endblock %}
+    {% include '/layout/footer.html.twig' %}
+</body>
+</html> 
