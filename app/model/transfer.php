@@ -39,6 +39,8 @@ Class Transfer extends Model{
                             $error++;
                             break;
                     }
+                    $fileUrl = "app/assets/file_uploaded/" . basename($_FILES["fileUpload"]["name"]);
+                    print_r($fileUrl);
                     $target_dir = ROOT . "/app/assets/file_uploaded/";
                     $target_file = $target_dir . basename($_FILES["fileUpload"]["name"]);
                     $uploadOk = 1;
@@ -101,8 +103,8 @@ Class Transfer extends Model{
             if($error == 0){
 
             $db = Database::getInstance();
-            $sql = 'INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie) VALUES ('. $emailExpediteur . ',' . $emailDestinataire . ',' . $checkbox . ')';
-            $stmt = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
+            $stmt = $db->query($sql);
             return $stmt;
             echo 'Votre fichier a bien été envoyé.';
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le :  jeu. 28 juin 2018 à 07:39
+-- Généré le :  ven. 29 juin 2018 à 12:27
 -- Version du serveur :  5.7.19
 -- Version de PHP :  7.1.9
 
@@ -53,9 +53,20 @@ CREATE TABLE IF NOT EXISTS `transfer` (
   `email_expediteur` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_destinataire` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `email_copie` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `url_file` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `transfer`
+--
+
+INSERT INTO `transfer` (`id`, `email_expediteur`, `email_destinataire`, `email_copie`, `url_file`) VALUES
+(3, '. expediteur@gmail.com . ', ' . destinataire@gmail.com . ', ' . 1 . ', '. assets/file_uploaded/2c2dce.jpg . '),
+(4, '. expediteur@gmail.com . ', ' . destinataire@gmail.com . ', ' . 1 . ', '. assets/file_uploaded/2c2dce.jpg . '),
+(5, ' expediteur@gmail.com', 'destinataire@gmail.com', '1', 'assets/file_uploaded/youtube.jpg'),
+(6, ' expediteur@gmail.com', 'destinataire@gmail.com', '1', 'assets/file_uploaded/George_Owen_Squierz.jpg'),
+(7, 'destinataire@gmail.com', 'expediteur@gmail.com', '1', 'app/assets/file_uploaded/Hulu-logo.jpg');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
