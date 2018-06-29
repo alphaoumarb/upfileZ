@@ -4,7 +4,7 @@
 <section id="home" class="row pt-50">
     <div class="row">
         <!-- <div class="col m4 offset-m4 bg-alpha0 nopadding bordernone"> -->
-        <form action="" method="POST" class="col m4 offset-m4 bg-alpha0 nopadding bordernone">
+        <form action="" method="POST" class="col m4 offset-m4 bg-alpha0 nopadding bordernone" enctype="multipart/form-data">
             <input class="dropify" type="file" name="fileUpload" id="input-file-before">              
             <div class="col m12 bg-white z-depth-1">
                     <div class="col m8 offset-m2 h500 center dsp-flx flx-col just-ct-evenly">
@@ -14,7 +14,7 @@
                         <input type="checkbox" class="filled-in" name="emailCopie" id="emailCopie"/>
                         <span>Souhaitez-vous reçevoir une copie ?</span>
                     </label>
-                    <input type="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3" value="Envoyer">
+                    <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3" value="Envoyer">
                 </div>
             </div>
         </form>
