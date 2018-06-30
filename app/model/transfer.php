@@ -1,5 +1,8 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 Class Transfer extends Model{
 
     public static function fileUpload(){
@@ -72,8 +75,10 @@ Class Transfer extends Model{
             }
             
             //Vérif si l'email Expéditeur est bon
+            
             $pattern = "/^(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){255,})(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){65,}@)(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22))(?:\\.(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-+[a-z0-9]+)*\\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-+[a-z0-9]+)*)|(?:\\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\\]))$/iD";
-            if(isset($_POST['emailExpediteur'])){
+            
+            if (is_a_mail($_POST['emailExpediteur'])){
                 $emailExpediteur = htmlspecialchars($emailExpediteur);
                 if(preg_match($pattern, $emailExpediteur)){
                     echo 'Mail ok Expediteur';//requete pour envoyer mail et enregistrer mail dans bdd//
@@ -108,12 +113,104 @@ Class Transfer extends Model{
             return $stmt;
             echo 'Votre fichier a bien été envoyé.';
 
-
             }else{
                 echo "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
                 return false;
             }
         }
       
-    }  
+    }
+
+    public static function sendMailPHP(){
+        
+        $mail = new PHPMailer(true);  
+                                    // Passing `true` enables exceptions
+        try {
+            //Server settings
+            $mail->SMTPDebug = false;                                 // Enable verbose debug output
+            $mail->isSMTP();                                      // Set mailer to use SMTP
+            $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
+            $mail->SMTPAuth = true;                               // Enable SMTP authentication
+            $mail->Username = 'b2pr2018@outlook.fr';                 // SMTP username
+            $mail->Password = '!4S!H7xg';                           // SMTP password
+            $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+            $mail->Port = 587;                                    // TCP port to connect to
+
+            //Recipients
+            $mail->setFrom('b2pr2018@outlook.fr', 'Mailer');
+            /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
+            $mail->addAddress('b2pr2018@outlook.fr');               // Name is optional
+/*             $mail->addReplyTo('info@example.com', 'Information');
+*/          /* $mail->addCC('cc@example.com');
+            $mail->addBCC('bcc@example.com'); */
+
+            //Attachments
+            /* $mail->addAttachment('/var/tmp/file.tar.gz'); */         // Add attachments
+            /* $mail->addAttachment('/tmp/image.jpg', 'new.jpg');     */// Optional name
+
+            //Content
+            $mail->isHTML(true);                                  // Set email format to HTML
+            $mail->Subject = 'Here is the subject';
+            $mail->Body    = "<html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+                <style>
+                    .bg-lightgray{background-color: #F8F8F8;}
+                    .bg-white{background-color: #FFF;}
+                    .bg-salmon{background-color: #ffd8b9;}
+                    .bg-purple{background-color: #A243E8;}
+                    .txt-white{color: #FFF;}
+                    .txt-purple{color: #A243E8;}
+                    .txt-darkgray{color: #444;}
+                    .txt-center{text-align: center;}
+                    .txt-deco-none{text-decoration: none;}
+                    .ft-arial{font-family: Arial, Helvetica, sans-serif;}
+                    .ft-wgt-bold{font-weight: bold;}
+                    .w20{width: 20%;}
+                    .w60{width: 60%;}
+                    .h10vh{height: 10vh;}
+                    .h50vh{height: 50vh;}
+                    .h100vh{height: 100vh;}
+                    .mrg-auto{margin:auto;}
+                    .dsp-flex{display: flex;}
+                    .flx-col{flex-direction: column;}
+                    .jst-evenly{justify-content: space-evenly;}        
+                    .jst-center{justify-content: center;}
+                    .p-button{padding: 10px 15px 10px;}
+                </style>
+                <title>UpfileZ / Vous avez reçu un fichier</title>
+            </head>
+            <body class='bg-lightgray ft-arial'>
+                <div class='container dsp-flex flx-col jst-center h100vh'>
+                    <section class='mrg-auto txt-center w60'>
+                        <div class='bg-purple h10vh dsp-flex flx-col'>
+                            <img class='mrg-auto' src='logo_upfilez.png'>
+                        </div>
+                        <div class='bg-white h50vh dsp-flex flx-col jst-evenly'>
+                            <article>
+                                <p class='txt-darkgray'>Vous avez reçu un fichier de la part de: <p>
+                                <span class='txt-purple ft-wgt-bold'>b2pr2018@outlook.fr</span> 
+                            </article>
+                            <article>
+                                <a href='.' class='txt-deco-none'><p class='w20 bg-purple txt-white p-button mrg-auto ft-wgt-bold'>Retrouvez le ici</p></a>
+                            </article>
+                            <article>
+                                <p class='txt-darkgray '>ou à l'adresse suivante:</p>
+                                <p class='bg-salmon txt-darkgray w60 mrg-auto p-button ft-wgt-bold'>URL</p>
+                            </article>
+                        </div>
+                    </section>
+                </div> 
+            </body>
+            </html>";
+            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+            $mail->send();
+            echo 'Message has been sent';
+        } catch (Exception $e) {
+            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+        }
+    }
 }

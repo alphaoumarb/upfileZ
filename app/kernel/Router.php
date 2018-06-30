@@ -16,7 +16,13 @@ class Router {
         } else {
             $parts = explode('/', $request);
 
-            if($parts[0] == 'login' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page de connexion
+            if($parts[0] == 'sendMail' && (count($parts) == 1 || $parts[1] == '')){
+                $result['controller']       = 'Transfer';
+                $result['action']           = 'mail';
+            }
+            
+
+            /* if($parts[0] == 'login' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page de connexion
                 $result['controller']       = 'User';
                 $result['action']           = 'login';
             } elseif($parts[0] == 'signup' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page d'inscription
@@ -25,7 +31,7 @@ class Router {
             } elseif($parts[0] == 'logout' && (count($parts) == 1 || $parts[1] == '')){ // Deconnexion de l'utilisateur
                 $result['controller']       = 'User';
                 $result['action']           = 'logout';
-            } 
+            }  */
         }
 
         return $result;
