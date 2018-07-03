@@ -1,8 +1,0 @@
-html, body { margin: 0; padding: 0; width:100%; height:100%;}
-
-body {background: url('../images/bg-jeux.jpg'); background-size:cover; overflow: hidden; background-position: bottom;}
-
-#vaisseau {transition: 0.6; }
-
-.f-head   { display: flex; }
-.j-cont   { justify-content: space-around; }

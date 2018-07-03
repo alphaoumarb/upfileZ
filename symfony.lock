@@ -1,0 +1,5 @@
+{
+    "phpmailer/phpmailer": {
+        "version": "v6.0.5"
+    }
+}
