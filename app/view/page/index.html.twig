@@ -20,7 +20,7 @@
                     <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3 col s6 offset-s3" value="Envoyer">
                     
                     {% if session.messageError != '' %}
-                        <div class="{{ type }}">{{ session.messageError }}</div>
+                        <div class="{{ msg }}">{{ session.messageError }}</div>
                     {% endif %}
                 </div>
             </div>

@@ -1,0 +1,31 @@
+{% extends '/layout/base.html.twig' %}
+
+{% block content %}
+
+
+<section id="home" class="row pt-50">
+    <div class="row">
+        
+        <div class="col m6 offset-m3 s12 z-depth-1 h500">
+            <p class="txt-dkrgray fs-25 center-align">Voici votre lien de téléchargement:</p>
+
+
+
+
+        </div>       
+        <div class="fixed-action-btn">
+
+            <!-- Element Showed -->
+            <a id="apropos" class="waves-effect waves-light btn-floating btn-large bg-purple" ><i class="material-icons">info_outline</i></a>
+
+            <!-- Tap Target Structure -->
+            <div class="tap-target bg-purple" data-target="apropos">
+                <div class="tap-target-content white-text">
+                        <h5><i class="material-icons medium">info_outline</i>À Propos</h5>
+                    <p>Lorem ipsum, dolor sit amet  consectetur adipisicing elit. Vel deleniti voluptate consequatur maiores fuga repellat voluptatibus delectus.</p>
+                </div>
+            </div>
+        </div>
+    </div> 
+</section>
+{% endblock %}

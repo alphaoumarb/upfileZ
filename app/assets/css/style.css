@@ -10,8 +10,9 @@ html{size: 62.5%;}
 .bg-purple{background-color: #A243E8;}
 .bg-lightgray{background-color: #FAFAFA;}
 .bg-white{background-color: #FFF;}
-
 .bg-alpha0{background-color: transparent;}
+
+.txt-dkrgray{color: #444;}
 
 /*Paddings & Margins*/
 .pt-50{padding-top: 50px;}
@@ -43,3 +44,5 @@ html{size: 62.5%;}
 
 input[type="submit"]{color: #FFF;}
 
+.success{color: green;}
+.error{color: red;}

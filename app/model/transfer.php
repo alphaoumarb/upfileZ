@@ -10,6 +10,7 @@ Class Transfer extends Model{
             
             $msg = array();
             $error = 0;
+
             $emailExpediteur = $_POST['emailExpediteur'];
             $emailDestinataire = $_POST['emailDestinataire'];
             $checkbox = isset($_POST['emailCopie']) ? 1 : 0; //Vérif si checkbox est true ou false
@@ -21,44 +22,45 @@ Class Transfer extends Model{
                         case 1:
                             $msg['msg'] = "Votre fichier ne doit pas dépasser 12Mo";
                             $msg['type'] = 'error';
+                            $msg['url'] = '';
                             $error++;
                             break;
                         case 2:
                             $msg['msg'] = "Votre fichier ne doit pas dépasser 12Mo";
                             $msg['type'] = 'error';
+                            $msg['url'] = '';
                             $error++;
                             break;
                         case 3:
                             $msg['msg'] = "Une erreur est survenue lors du téléchargement";
                             $msg['type'] = "error";
+                            $msg['url'] = '';
                             $error++;
                             break;
                         case 4:
                             $msg['msg'] = "Veuillez sélectionner un fichier";
                             $msg['type'] = "error";
+                            $msg['url'] = '';
                             $error++;
                             break;
                     }
-                    $fileUrl = "app/assets/file_uploaded/" . basename($_FILES["fileUpload"]["name"]);
-                   /*  print_r($msg); */
+                    $fileUrl = "localhost/upfilez/app/assets/file_uploaded/" . basename($_FILES["fileUpload"]["name"]);
                     $target_dir = ROOT . "/app/assets/file_uploaded/";
                     $target_file = $target_dir . basename($_FILES["fileUpload"]["name"]);
+
                     $uploadOk = 1;
                     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
                     // Check la taille du fichier
                     if ($_FILES["fileUpload"]["size"] > 2147483648) {
-/*                         echo "Votre fichier est trop grand.";
-*/                      $msg['msg'] .= "Votre fichier est trop grand.";
+                        $msg['msg'] .= "Votre fichier est trop grand.";
                         $msg['type'] = "error";
                         $uploadOk = 0;
-                        
                     }
 
                     // Check si il y a une erreur
                     if ($uploadOk == 0) {
-/*                         echo "Désolé, votre fichier n'a pas pu être uploadé.";
-*/                      $msg['msg'] = "Désolé, votre fichier n'a pas pu être uploadé.";
+                        $msg['msg'] = "Désolé, votre fichier n'a pas pu être uploadé.";
                         $msg['type'] = "error";
                         
                     // Si Ok on upload
@@ -91,21 +93,30 @@ Class Transfer extends Model{
                 $error++;
             }
 
+            //All good
             if($error == 0){
 
-            $db = Database::getInstance();
-            $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
-            $stmt = $db->query($sql);
-            
-/*             Self::sendMailPHP(); */
+            $db = new PDO('mysql:host='.constant("server_name").';charset=UTF8;dbname='.constant("db_name"), constant("user"), constant("password"));
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $sth = $db->prepare("INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')");
+            $sth->bindValue(':email_expediteur', $emailExpediteur, PDO::PARAM_STR);
+            $sth->bindValue(':email_destinataire', $emailDestinataire, PDO::PARAM_STR);
+            $sth->bindValue(':email_copie', $checkbox, PDO::PARAM_BOOL);
+            $sth->bindValue(':url_file', $fileUrl, PDO::PARAM_STR);
+            $sth->execute();
+            $id = $db->lastInsertId();
+
             $msg['msg'] = 'Votre fichier a bien été envoyé !';
             $msg['type'] = "success";
+            $msg['url'] = $id;
+            Self::sendMailPHP();
+
             }
 
             $_SESSION['messageError'] = $msg['msg'];
             
         } else {
-            $msg['msg'] = "Une erreur s'est produite lors de l'envoie"; 
+            $msg['msg'] = "Une erreur s'est produite lors de l'envoi"; 
             $msg['type'] = 'error';
             /* if(empty($emailExpediteur)){
                 $msg['msg'] = "Veuillez rentrer votre adresse mail";
@@ -133,15 +144,15 @@ Class Transfer extends Model{
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = 'b2pr2018b@outlook.fr';                 // SMTP username
+            $mail->Username = 'b2pr2018c@outlook.fr';                 // SMTP username
             $mail->Password = 'azertY1234!';                           // SMTP password
             $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 587;                                    // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('b2pr2018b@outlook.fr', 'Mailer');
+            $mail->setFrom('b2pr2018c@outlook.fr', 'Mailer');
             /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
-            $mail->addAddress('b2pr2018b@outlook.fr');               // Name is optional
+            $mail->addAddress('b2pr2018c@outlook.fr');               // Name is optional
 /*             $mail->addReplyTo('info@example.com', 'Information');
 */          /* $mail->addCC('cc@example.com');
             $mail->addBCC('bcc@example.com'); */
@@ -155,42 +166,62 @@ Class Transfer extends Model{
             $mail->Subject = 'Here is the subject';
             $mail->Body    = "<html lang='en'>
             <head>
-                <meta charset='UTF-8'>
-                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-                <meta http-equiv='X-UA-Compatible' content='ie=edge'>
-               
-                <title>UpfileZ / Vous avez reçu un fichier</title>
+            <meta charset='UTF-8'>
+            <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+            <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+            
+            <title>UpfileZ / Vous avez reçu un fichier</title>
             </head>
-            <body style='background-color: #F8F8F8; font-family: Arial, Helvetica, sans-serif;'>
-                <div style='display: flex; flex-direction: column; justify-content: center; height: 500px;'>
-                    <section style='margin:auto; text-align: center; width: 300px;'>
-                        <div style='background-color: #A243E8; height: 100px; display: flex; flex-direction: column;'>
-                            <img style='margin:auto;' src='logo_upfilez.png'>
-                        </div>
-                        <div style='background-color: #FFF; height: 300px; display: flex; flex-direction: column; justify-content: space-evenly;'>
-                            <article>
-                                <p style='color: #444;'>Vous avez reçu un fichier de la part de: <p>
-                                <span style='color: #A243E8; font-weight: bold;'>b2pr2018@outlook.fr</span> 
-                            </article>
-                            <article>
-                                <a href='#' style='text-decoration: none;'><p style='width: 100px; background-color: #A243E8; color: #FFF; padding: 10px 15px 10px; margin:auto; font-weight: bold;'>Retrouvez le ici</p></a>
-                            </article>
-                            <article>
-                                <p style='color: #444;'>ou à l'adresse suivante:</p>
-                                <p style='background-color: #ffd8b9; color: #444; width: 300px; margin:auto; padding: 10px 15px 10px; font-weight: bold;'>URL</p>
-                            </article>
-                        </div>
-                    </section>
-                </div> 
-            </body>
+            
+            
+            <table cellspacing='0' cellpadding='10' border='0' width='100%'>
+            
+            <tr>
+            <td><div style='background-color:
+            #A243E8
+            ; height: 100px; display: flex; flex-direction: column;'>
+            <img style='margin:auto;' src='logo_upfilez.jpg' alt='NOTRE LOGO'>
+            </div>
+            </td>
+            </tr>
+            
+            <tr>
+            <td align='center'><p style='font-family:helvetica; font-size:25px; color:#A243E8'>Ce code mail</p></td>
+            </tr>
+            
+            <tr>
+            <td align='center'><p style='font-family:helvetica; font-size:25px;'>vous a envoy&eacute; un fichier</p></td>
+            </tr>
+            
+            <tr>
+            <td align='center'><button style='height:50px; border:none; color:#fff; padding: 10px 15px 10px;background-color:
+            #A243E8
+            '>R&eacute;cup&eacute;rez vos fichiers</button></td>
+            </tr>
+            
+            </table>
+            
             </html>";
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
 
             $mail->send();
-            echo 'Message has been sent';
+            $msg['msg'] = "Votre fichier a été envoyé !";
             
         } catch (Exception $e) {
-            echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
+            $msg['msg'] = "Le message n'a pas pu être envoyé. Error: ". $mail->ErrorInfo;
         }
+    }
+
+    public static function linkFile($id){
+        
+        $db = Database::getInstance();
+        $sql = "SELECT * FROM `transfer` WHERE id = :id";
+        $sth = $db->prepare($sql);
+        $sth->setFetchMode(PDO::FETCH_ASSOC);
+        $sth->bindValue(':id', $id, PDO::PARAM_INT);
+        $sth->execute();
+        return $sth->fetch();
+
+        $msg['url'] = $id;
     }
 }
