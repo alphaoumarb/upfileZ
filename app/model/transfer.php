@@ -2,6 +2,8 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+require 'vendor/autoload.php';
+
 Class Transfer extends Model{
 
     public static function fileUpload(){
@@ -127,19 +129,18 @@ Class Transfer extends Model{
             $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
             $stmt = $db->query($sql);
             echo 'Votre fichier a bien été envoyé.';
-            //transfer::sendMailPHP();
+            Transfer::sendMailPHP();
 
             } else {
-/*                 echo "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
-*/              $msg['msg'] = "<p>Désolé, il y a eu un problème lors de l'envoi de votre fichier.</p>";
+                $msg['msg'] = "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
                 $msg['type'] = "error";
-             
             }
 
             $_SESSION['messageError'] = $msg['msg'];
             
         } else {
-            $msg['msg'] = 'Heyyyy !';
+            $msg['msg'] = "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
+            $msg['type'] = "error";
             // Message d'erreur si pas de $_POST
         }
 
@@ -156,15 +157,15 @@ Class Transfer extends Model{
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = 'b2pr2018b@outlook.fr';                 // SMTP username
+            $mail->Username = 'b2pr2018c@outlook.fr';                 // SMTP username
             $mail->Password = 'azertY1234!';                           // SMTP password
             $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 587;                                    // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('b2pr2018b@outlook.fr', 'Mailer');
+            $mail->setFrom('b2pr2018c@outlook.fr', 'Mailer');
             /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
-            $mail->addAddress('b2pr2018b@outlook.fr');               // Name is optional
+            $mail->addAddress('b2pr2018c@outlook.fr');               // Name is optional
 /*             $mail->addReplyTo('info@example.com', 'Information');
 */          /* $mail->addCC('cc@example.com');
             $mail->addBCC('bcc@example.com'); */
@@ -185,26 +186,23 @@ Class Transfer extends Model{
                 <title>UpfileZ / Vous avez reçu un fichier</title>
             </head>
             <body style='background-color: #F8F8F8; font-family: Arial, Helvetica, sans-serif;'>
-                <div style='display: flex; flex-direction: column; justify-content: center; height: 500px;'>
-                    <section style='margin:auto; text-align: center; width: 300px;'>
-                        <div style='background-color: #A243E8; height: 100px; display: flex; flex-direction: column;'>
-                            <img style='margin:auto;' src='logo_upfilez.png'>
-                        </div>
-                        <div style='background-color: #FFF; height: 300px; display: flex; flex-direction: column; justify-content: space-evenly;'>
-                            <article>
-                                <p style='color: #444;'>Vous avez reçu un fichier de la part de: <p>
-                                <span style='color: #A243E8; font-weight: bold;'>b2pr2018@outlook.fr</span> 
-                            </article>
-                            <article>
-                                <a href='#' style='text-decoration: none;'><p style='width: 100px; background-color: #A243E8; color: #FFF; padding: 10px 15px 10px; margin:auto; font-weight: bold;'>Retrouvez le ici</p></a>
-                            </article>
-                            <article>
-                                <p style='color: #444;'>ou à l'adresse suivante:</p>
-                                <p style='background-color: #ffd8b9; color: #444; width: 300px; margin:auto; padding: 10px 15px 10px; font-weight: bold;'>URL</p>
-                            </article>
-                        </div>
-                    </section>
-                </div> 
+                <table style='width:100%'>
+                <tr>
+                  <th>Firstname</th>
+                  <th>Lastname</th> 
+                  <th>Age</th>
+                </tr>
+                <tr>
+                  <td>Jill</td>
+                  <td>Smith</td> 
+                  <td>50</td>
+                </tr>
+                <tr>
+                  <td>Eve</td>
+                  <td>Jackson</td> 
+                  <td>94</td>
+                </tr>
+              </table> 
             </body>
             </html>";
             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
