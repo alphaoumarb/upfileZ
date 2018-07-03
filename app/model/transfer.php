@@ -8,14 +8,13 @@ Class Transfer extends Model{
 
     public static function fileUpload(){
 
-        if(isset($_POST['submit']) && isset($_POST['emailExpediteur']) && isset($_POST['emailDestinataire'])){
+        if(isset($_POST['submit'])){
+            
             $msg = array();
             $error = 0;
             $emailExpediteur = $_POST['emailExpediteur'];
             $emailDestinataire = $_POST['emailDestinataire'];
-
-            //Vérif si checkbox est true ou false
-            $checkbox = isset($_POST['emailCopie']) ? 1 : 0;
+            $checkbox = isset($_POST['emailCopie']) ? 1 : 0; //Vérif si checkbox est true ou false
 
             if(!empty($_FILES)){
 
@@ -50,9 +49,9 @@ Class Transfer extends Model{
                     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 
                     // Check la taille du fichier
-                    if ($_FILES["fileUpload"]["size"] > 1073741824) {
+                    if ($_FILES["fileUpload"]["size"] > 2147483648) {
 /*                         echo "Votre fichier est trop grand.";
-*/                      $msg['msg'] = "Votre fichier est trop grand.";
+*/                      $msg['msg'] .= "Votre fichier est trop grand.";
                         $msg['type'] = "error";
                         $uploadOk = 0;
                         
@@ -66,59 +65,30 @@ Class Transfer extends Model{
                         
                     // Si Ok on upload
                     } else {
-                        if (move_uploaded_file($_FILES["fileUpload"]["tmp_name"], $target_file)) {
-                            echo "Votre fichier a été uploadé avec succès !";
-                            
-                        } else {
-/*                             echo "Désolé, une erreur s'est produite lors de l'upload. Veuillez Réessayer";
- */                            $msg['msg'] = "Désolé, une erreur s'est produite lors de l'upload. Veuillez Réessayer";
-                            $msg['type'] = "error";
-                        }
+                        move_uploaded_file($_FILES["fileUpload"]["tmp_name"], $target_file);
                     }
                 }
 
-            } else {
-                $error++;
-                /* echo "<p>Veuillez sélectionner un fichier</p>"; */
-                $msg['msg'] = "<p>Veuillez sélectionner un fichier</p>.";
-                $msg['type'] = "error";
             }
-            
-            //Vérif si l'email Expéditeur est bon
-            
-            $pattern = "/^(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){255,})(?!(?:(?:\\x22?\\x5C[\\x00-\\x7E]\\x22?)|(?:\\x22?[^\\x5C\\x22]\\x22?)){65,}@)(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22))(?:\\.(?:(?:[\\x21\\x23-\\x27\\x2A\\x2B\\x2D\\x2F-\\x39\\x3D\\x3F\\x5E-\\x7E]+)|(?:\\x22(?:[\\x01-\\x08\\x0B\\x0C\\x0E-\\x1F\\x21\\x23-\\x5B\\x5D-\\x7F]|(?:\\x5C[\\x00-\\x7F]))*\\x22)))*@(?:(?:(?!.*[^.]{64,})(?:(?:(?:xn--)?[a-z0-9]+(?:-+[a-z0-9]+)*\\.){1,126}){1,}(?:(?:[a-z][a-z0-9]*)|(?:(?:xn--)[a-z0-9]+))(?:-+[a-z0-9]+)*)|(?:\\[(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){7})|(?:(?!(?:.*[a-f0-9][:\\]]){7,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,5})?)))|(?:(?:IPv6:(?:(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){5}:)|(?:(?!(?:.*[a-f0-9]:){5,})(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3})?::(?:[a-f0-9]{1,4}(?::[a-f0-9]{1,4}){0,3}:)?)))?(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))(?:\\.(?:(?:25[0-5])|(?:2[0-4][0-9])|(?:1[0-9]{2})|(?:[1-9]?[0-9]))){3}))\\]))$/iD";
-            
-            if (is_a_mail($_POST['emailExpediteur'])){
-                $emailExpediteur = htmlspecialchars($emailExpediteur);
-                if(preg_match($pattern, $emailExpediteur)){
-                    echo 'Mail ok Expediteur';//requete pour envoyer mail et enregistrer mail dans bdd//
-                } else {
-/*                     echo "<p>L'email de votre destinaire n'est pas valide</p>";
-*/                  $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
-                    $msg['type'] = "error";
-                    $error++;
-                }
-            }else{
-                /* echo "<p>Votre email n'est pas valide</p>"; */
-                $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
+                
+            //Vérif mail Expéditeur            
+            if (empty($emailExpediteur)){
+                $msg['msg'] .= "Veuillez rentrer votre adresse mail";
+                $msg['type'] = "error";
+                $error++;
+            } else if(!is_a_mail($emailExpediteur)){
+                $msg['msg'] .= "Votre email n'est pas valide";
                 $msg['type'] = "error";
                 $error++;
             }
-    
-            //Vérif si l'email Destinaire est bon
-            if(isset($_POST['emailDestinataire'])){
-                $emailDestinataire = htmlspecialchars($emailDestinataire);
-                if(preg_match($pattern, $emailDestinataire)){
-                    echo 'Mail ok Destinataire';//requete pour envoyer mail et enregistrer mail dans bdd//
-                }else{
-                    /* echo "<p>L'email de votre destinaire n'est pas valide</p>"; */
-                    $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
-                    $msg['type'] = "error";
-                    $error++;
-                }
-            } else {
-/*                 echo "<p>Veuillez entrer le mail de votre destinataire";
- */             $msg['msg'] = "<p>Veuillez entrer le mail de votre destinataire</p>";
+
+            //Vérif mail Destinataire
+            if (empty($emailDestinataire)){
+                $msg['msg'] .= "Veuillez rentrer l'adresse mail de votre destinataire";
+                $msg['type'] = "error";
+                $error++;
+            } else if(!is_a_mail($emailDestinataire)){
+                $msg['msg'] .= "L'adresse mail de votre destinataire n'est pas valide";
                 $msg['type'] = "error";
                 $error++;
             }
@@ -128,20 +98,30 @@ Class Transfer extends Model{
             $db = Database::getInstance();
             $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
             $stmt = $db->query($sql);
-            echo 'Votre fichier a bien été envoyé.';
-            Transfer::sendMailPHP();
-
-            } else {
-                $msg['msg'] = "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
-                $msg['type'] = "error";
+            mysql_insert_id();
+            print_r('your id:'.mysql_insert_id());
+            
+/*             Self::sendMailPHP(); */
+            $msg['msg'] = 'Votre fichier a bien été envoyé !';
+            $msg['type'] = "success";
             }
 
             $_SESSION['messageError'] = $msg['msg'];
             
         } else {
-            $msg['msg'] = "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
-            $msg['type'] = "error";
-            // Message d'erreur si pas de $_POST
+            $msg['msg'] = "Une erreur s'est produite lors de l'envoie"; 
+            $msg['type'] = 'error';
+            /* if(empty($emailExpediteur)){
+                $msg['msg'] = "Veuillez rentrer votre adresse mail";
+                $msg['type'] = "error";
+            }
+            if(empty($_POST['emailDestinataire'])){
+                $msg['msg'] = "Veuillez rentrer";
+                $msg['type'] = "error";
+            }
+            if(empty($_FILES)){
+            $msg['msg'] = 'Heyyyy !';
+            // Message d'erreur si pas de $_POST */
         }
 
         return $msg;
