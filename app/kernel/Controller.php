@@ -12,5 +12,8 @@ class Controller {
         $this->twig = new Twig_Environment($this->loader, array(
             'cache' => false
         ));
+
+        $this->twig->addGlobal('session', $_SESSION);
+
     }    
 }

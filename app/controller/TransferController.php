@@ -2,22 +2,19 @@
 
 class TransferController extends Controller
 {
-    public function index()
-    {
-        $fileUpload = Transfer::fileUpload();
-        
-        $template = $this->twig->loadTemplate('/Page/index.html.twig');
-        echo $template->render(array(
-        ));    
-    }
+    public function index(){
+        unset($_SESSION['messageError']);
+        $type = '';
 
-    public function mail()
-    {
-        $sendSwiftMail = Transfer::sendMailPHP();
+        if(isset($_FILES['fileUpload'])){
+            $fileUpload = Transfer::fileUpload();
+            $type = $fileUpload['type'];
+        }        
         
         $template = $this->twig->loadTemplate('/Page/index.html.twig');
         echo $template->render(array(
-        ));   
+            'type' => $type
+        ));
     }
 }
 

@@ -1,22 +1,27 @@
 {% extends '/layout/base.html.twig' %}
 
 {% block content %}
+
+
 <section id="home" class="row pt-50">
     <div class="row">
+        
         <!-- <div class="col m4 offset-m4 bg-alpha0 nopadding bordernone"> -->
-        <form action="" method="POST" class="col m4 offset-m4 bg-alpha0 nopadding bordernone" enctype="multipart/form-data">
+        <form action="" method="POST" class="col m4 offset-m4 s12 bg-alpha0 nopadding bordernone" enctype="multipart/form-data">
             <input class="dropify" type="file" name="fileUpload" id="input-file-before">              
-            <div class="col m12 bg-white z-depth-1">
-                    <div class="col m8 offset-m2 h500 center dsp-flx flx-col just-ct-evenly">
+            <div class="col m12 s12 g-white z-depth-1">
+                    <div class="col m8 s8 offset-m2 offset-s2 h500 center dsp-flx flx-col just-ct-evenly">
                     <input class="validate" placeholder="Votre e-mail" type="email" name="emailExpediteur" id="emailExpediteur" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
                     <input type="email" placeholder="E-mail du destinataire" name="emailDestinataire" id="emailDestinataire" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$">
                     <label>
                         <input type="checkbox" class="filled-in" name="emailCopie" id="emailCopie"/>
                         <span>Souhaitez-vous reçevoir une copie ?</span>
                     </label>
-                    <a href="sendMail">
-                        <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3" value="Envoyer">
-                    </a>
+                    <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3 col s6 offset-s3" value="Envoyer">
+                    
+                    {% if session.messageError != '' %}
+                        <div class="{{ type }}">{{ session.messageError }}</div>
+                    {% endif %}
                 </div>
             </div>
         </form>
@@ -35,15 +40,4 @@
         </div>
     </div> 
 </section>
-
-
-
-{# {% if transfers|length > 0 %}
-    {% for transfer in transfers %}
-        <p>{{ transfer.emailExpediteur }} / {{ transfer.emailDestinataire }} / {{ transfer.url }}</p>
-    {% endfor %}
-{% else %}
-    <p>Aucun transfert trouvé</p>
-{% endif %}
-     #}
 {% endblock %}

@@ -1,5 +1,4 @@
 <?php
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -7,8 +6,7 @@ Class Transfer extends Model{
 
     public static function fileUpload(){
 
-        if(isset($_POST["submit"]) && isset($_POST["emailExpediteur"]) && isset($_POST["emailDestinataire"])){
-
+        if(isset($_POST['submit']) && isset($_POST['emailExpediteur']) && isset($_POST['emailDestinataire'])){
             $msg = array();
             $error = 0;
             $emailExpediteur = $_POST['emailExpediteur'];
@@ -23,12 +21,12 @@ Class Transfer extends Model{
                     switch($_FILES['fileUpload']['error']){ //ref : http://php.net/manual/fr/features.file-upload.errors.php
                         case 1:
                             $msg['msg'] = "Votre fichier ne doit pas dépasser 12Mo";
-                            $msg['type'] = "error";
+                            $msg['type'] = 'error';
                             $error++;
                             break;
                         case 2:
                             $msg['msg'] = "Votre fichier ne doit pas dépasser 12Mo";
-                            $msg['type'] = "error";
+                            $msg['type'] = 'error';
                             $error++;
                             break;
                         case 3:
@@ -43,7 +41,7 @@ Class Transfer extends Model{
                             break;
                     }
                     $fileUrl = "app/assets/file_uploaded/" . basename($_FILES["fileUpload"]["name"]);
-                    print_r($fileUrl);
+                   /*  print_r($msg); */
                     $target_dir = ROOT . "/app/assets/file_uploaded/";
                     $target_file = $target_dir . basename($_FILES["fileUpload"]["name"]);
                     $uploadOk = 1;
@@ -51,27 +49,37 @@ Class Transfer extends Model{
 
                     // Check la taille du fichier
                     if ($_FILES["fileUpload"]["size"] > 1073741824) {
-                        echo "Votre fichier est trop grand.";
+/*                         echo "Votre fichier est trop grand.";
+*/                      $msg['msg'] = "Votre fichier est trop grand.";
+                        $msg['type'] = "error";
                         $uploadOk = 0;
+                        
                     }
 
                     // Check si il y a une erreur
                     if ($uploadOk == 0) {
-                        echo "Désolé, votre fichier n'a pas pu être uploadé.";
+/*                         echo "Désolé, votre fichier n'a pas pu être uploadé.";
+*/                      $msg['msg'] = "Désolé, votre fichier n'a pas pu être uploadé.";
+                        $msg['type'] = "error";
+                        
                     // Si Ok on upload
                     } else {
                         if (move_uploaded_file($_FILES["fileUpload"]["tmp_name"], $target_file)) {
                             echo "Votre fichier a été uploadé avec succès !";
+                            
                         } else {
-                            echo "Désolé, une erreur s'est produite lors de l'upload. Veuillez Réessayer";
+/*                             echo "Désolé, une erreur s'est produite lors de l'upload. Veuillez Réessayer";
+ */                            $msg['msg'] = "Désolé, une erreur s'est produite lors de l'upload. Veuillez Réessayer";
+                            $msg['type'] = "error";
                         }
                     }
                 }
 
             } else {
                 $error++;
-                print_r($error);
-                echo "<p>Veuillez sélectionner un fichier</p>";
+                /* echo "<p>Veuillez sélectionner un fichier</p>"; */
+                $msg['msg'] = "<p>Veuillez sélectionner un fichier</p>.";
+                $msg['type'] = "error";
             }
             
             //Vérif si l'email Expéditeur est bon
@@ -83,11 +91,15 @@ Class Transfer extends Model{
                 if(preg_match($pattern, $emailExpediteur)){
                     echo 'Mail ok Expediteur';//requete pour envoyer mail et enregistrer mail dans bdd//
                 } else {
-                    echo "<p>L'email de votre destinaire n'est pas valide</p>";
+/*                     echo "<p>L'email de votre destinaire n'est pas valide</p>";
+*/                  $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
+                    $msg['type'] = "error";
                     $error++;
                 }
             }else{
-                echo "<p>Votre email n'est pas valide</p>";
+                /* echo "<p>Votre email n'est pas valide</p>"; */
+                $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
+                $msg['type'] = "error";
                 $error++;
             }
     
@@ -97,11 +109,15 @@ Class Transfer extends Model{
                 if(preg_match($pattern, $emailDestinataire)){
                     echo 'Mail ok Destinataire';//requete pour envoyer mail et enregistrer mail dans bdd//
                 }else{
-                    echo "<p>L'email de votre destinaire n'est pas valide</p>";
+                    /* echo "<p>L'email de votre destinaire n'est pas valide</p>"; */
+                    $msg['msg'] = "<p>L'email de votre destinaire n'est pas valide</p>";
+                    $msg['type'] = "error";
                     $error++;
                 }
             } else {
-                echo "<p>Veuillez entrer le mail de votre destinataire";
+/*                 echo "<p>Veuillez entrer le mail de votre destinataire";
+ */             $msg['msg'] = "<p>Veuillez entrer le mail de votre destinataire</p>";
+                $msg['type'] = "error";
                 $error++;
             }
 
@@ -110,15 +126,24 @@ Class Transfer extends Model{
             $db = Database::getInstance();
             $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
             $stmt = $db->query($sql);
-            return $stmt;
             echo 'Votre fichier a bien été envoyé.';
+            //transfer::sendMailPHP();
 
-            }else{
-                echo "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
-                return false;
+            } else {
+/*                 echo "Désolé, il y a eu un problème lors de l'envoi de votre fichier.";
+*/              $msg['msg'] = "<p>Désolé, il y a eu un problème lors de l'envoi de votre fichier.</p>";
+                $msg['type'] = "error";
+             
             }
+
+            $_SESSION['messageError'] = $msg['msg'];
+            
+        } else {
+            $msg['msg'] = 'Heyyyy !';
+            // Message d'erreur si pas de $_POST
         }
-      
+
+        return $msg;
     }
 
     public static function sendMailPHP(){
@@ -131,15 +156,15 @@ Class Transfer extends Model{
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = 'b2pr2018@outlook.fr';                 // SMTP username
-            $mail->Password = '!4S!H7xg';                           // SMTP password
+            $mail->Username = 'b2pr2018b@outlook.fr';                 // SMTP username
+            $mail->Password = 'azertY1234!';                           // SMTP password
             $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 587;                                    // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('b2pr2018@outlook.fr', 'Mailer');
+            $mail->setFrom('b2pr2018b@outlook.fr', 'Mailer');
             /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
-            $mail->addAddress('b2pr2018@outlook.fr');               // Name is optional
+            $mail->addAddress('b2pr2018b@outlook.fr');               // Name is optional
 /*             $mail->addReplyTo('info@example.com', 'Information');
 */          /* $mail->addCC('cc@example.com');
             $mail->addBCC('bcc@example.com'); */
@@ -156,49 +181,26 @@ Class Transfer extends Model{
                 <meta charset='UTF-8'>
                 <meta name='viewport' content='width=device-width, initial-scale=1.0'>
                 <meta http-equiv='X-UA-Compatible' content='ie=edge'>
-                <style>
-                    .bg-lightgray{background-color: #F8F8F8;}
-                    .bg-white{background-color: #FFF;}
-                    .bg-salmon{background-color: #ffd8b9;}
-                    .bg-purple{background-color: #A243E8;}
-                    .txt-white{color: #FFF;}
-                    .txt-purple{color: #A243E8;}
-                    .txt-darkgray{color: #444;}
-                    .txt-center{text-align: center;}
-                    .txt-deco-none{text-decoration: none;}
-                    .ft-arial{font-family: Arial, Helvetica, sans-serif;}
-                    .ft-wgt-bold{font-weight: bold;}
-                    .w20{width: 20%;}
-                    .w60{width: 60%;}
-                    .h10vh{height: 10vh;}
-                    .h50vh{height: 50vh;}
-                    .h100vh{height: 100vh;}
-                    .mrg-auto{margin:auto;}
-                    .dsp-flex{display: flex;}
-                    .flx-col{flex-direction: column;}
-                    .jst-evenly{justify-content: space-evenly;}        
-                    .jst-center{justify-content: center;}
-                    .p-button{padding: 10px 15px 10px;}
-                </style>
+               
                 <title>UpfileZ / Vous avez reçu un fichier</title>
             </head>
-            <body class='bg-lightgray ft-arial'>
-                <div class='container dsp-flex flx-col jst-center h100vh'>
-                    <section class='mrg-auto txt-center w60'>
-                        <div class='bg-purple h10vh dsp-flex flx-col'>
-                            <img class='mrg-auto' src='logo_upfilez.png'>
+            <body style='background-color: #F8F8F8; font-family: Arial, Helvetica, sans-serif;'>
+                <div style='display: flex; flex-direction: column; justify-content: center; height: 500px;'>
+                    <section style='margin:auto; text-align: center; width: 300px;'>
+                        <div style='background-color: #A243E8; height: 100px; display: flex; flex-direction: column;'>
+                            <img style='margin:auto;' src='logo_upfilez.png'>
                         </div>
-                        <div class='bg-white h50vh dsp-flex flx-col jst-evenly'>
+                        <div style='background-color: #FFF; height: 300px; display: flex; flex-direction: column; justify-content: space-evenly;'>
                             <article>
-                                <p class='txt-darkgray'>Vous avez reçu un fichier de la part de: <p>
-                                <span class='txt-purple ft-wgt-bold'>b2pr2018@outlook.fr</span> 
+                                <p style='color: #444;'>Vous avez reçu un fichier de la part de: <p>
+                                <span style='color: #A243E8; font-weight: bold;'>b2pr2018@outlook.fr</span> 
                             </article>
                             <article>
-                                <a href='.' class='txt-deco-none'><p class='w20 bg-purple txt-white p-button mrg-auto ft-wgt-bold'>Retrouvez le ici</p></a>
+                                <a href='#' style='text-decoration: none;'><p style='width: 100px; background-color: #A243E8; color: #FFF; padding: 10px 15px 10px; margin:auto; font-weight: bold;'>Retrouvez le ici</p></a>
                             </article>
                             <article>
-                                <p class='txt-darkgray '>ou à l'adresse suivante:</p>
-                                <p class='bg-salmon txt-darkgray w60 mrg-auto p-button ft-wgt-bold'>URL</p>
+                                <p style='color: #444;'>ou à l'adresse suivante:</p>
+                                <p style='background-color: #ffd8b9; color: #444; width: 300px; margin:auto; padding: 10px 15px 10px; font-weight: bold;'>URL</p>
                             </article>
                         </div>
                     </section>
@@ -209,6 +211,7 @@ Class Transfer extends Model{
 
             $mail->send();
             echo 'Message has been sent';
+            
         } catch (Exception $e) {
             echo 'Message could not be sent. Mailer Error: ', $mail->ErrorInfo;
         }
