@@ -17,10 +17,11 @@
                         <input type="checkbox" class="filled-in" name="emailCopie" id="emailCopie"/>
                         <span>Souhaitez-vous reçevoir une copie ?</span>
                     </label>
-                    <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text col m6 offset-m3 col s6 offset-s3" value="Envoyer">
-                    
-                    {% if session.messageError != '' %} 
-                        <div class="{{ type }}">{{ session.messageError }}</div>
+                    <label>
+                    <input type="submit" id="submit" name="submit" class="waves-effect waves-light bg-purple btn white-text" value="Envoyer">
+                    </label>
+                    {% if message != '' %}
+                        <div class="{{ type }}">{{ message }}</div>
                     {% endif %}
                 </div>
             </div>

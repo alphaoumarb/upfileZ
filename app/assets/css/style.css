@@ -9,9 +9,13 @@ html{size: 62.5%;}
 /*Backgrounds & Colors*/
 .bg-purple{background-color: #A243E8;}
 .bg-lightgray{background-color: #FAFAFA;}
+.bg-salmon{background-color: #ffd8b9};
 .bg-white{background-color: #FFF;}
-
 .bg-alpha0{background-color: transparent;}
+
+.txt-white{color: #FFF;}
+.txt-gray{color: #7c7c7c;}
+.txt-dkrgray{color: #444;}
 
 /*Paddings & Margins*/
 .pt-50{padding-top: 50px;}
@@ -30,6 +34,10 @@ html{size: 62.5%;}
 
 /*Fonts*/
 .fs-25{font-size: 2.5rem;}
+.fs-16{font-size: 1.6rem;}
+.fs-12{font-size: 1.2rem;}
+
+.fw-bold{font-weight: bold;}
 
 /*Misc*/
 .btn:hover, a>i:hover{background-color: #ff56c9;}
@@ -38,8 +46,7 @@ html{size: 62.5%;}
     border-style: dashed;
     background-color: transparent;}
 
-    button:hover{
-        background-color: red;}
+input[type="submit"],[type="button"]{color: #FFF;}
 
-input[type="submit"]{color: #FFF;}
-
+.success{color: green;}
+.error{color: red;}

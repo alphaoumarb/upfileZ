@@ -3,19 +3,40 @@
 class TransferController extends Controller
 {
     public function index(){
-        unset($_SESSION['messageError']);
-        $type = '';
+        $message = ''; $type = '';        
 
         if(isset($_FILES['fileUpload'])){
-            $fileUpload = Transfer::fileUpload();
-            $type = $fileUpload['type'];
-        }        
-        
+            $msg = Transfer::fileUpload();
+            $message = $msg['msg'];
+            $type = $msg['type'];
+
+            /* if(isset($_POST['submit'])){
+                try{
+                    if($msg['type'] == 'success'){
+                        $id = $msg['url'];
+                        $linkFile = Transfer::linkFile($id);
+                    }
+                }
+                catch(\Exception $e){
+                    echo $e->getMessage();
+                    
+                }
+            
+            
+            } */  
+                
+        } 
+
         $template = $this->twig->loadTemplate('/Page/index.html.twig');
         echo $template->render(array(
-            'type' => $type
+            'message'   => $message,
+            'type'      => $type
         ));
     }
+
+    
 }
+
+
 
 
