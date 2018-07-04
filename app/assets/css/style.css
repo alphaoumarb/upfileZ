@@ -50,5 +50,10 @@ html{size: 62.5%;}
 
 input[type="submit"],[type="button"]{color: #FFF;}
 
-.success{color: green;}
+.success{
+    background-color: #ffd8b9;
+    padding: 10px!important;
+    color: #444;
+}
+
 .error{color: red;}

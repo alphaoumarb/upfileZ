@@ -98,13 +98,7 @@ Class Transfer extends Model{
 
             //All good
             if($error == 0){
-                /* $db = Database::getInstance();
-                $sql = "INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')";
-                $stmt = $db->query($sql);
-                mysql_insert_id();
-                print_r('your id:'.mysql_insert_id()); */
-                
-    /*             Self::sendMailPHP(); */
+
             $db = Database::getInstance();
             $sth = $db->prepare("INSERT INTO `transfer`(
                                     email_expediteur, 
@@ -136,17 +130,6 @@ Class Transfer extends Model{
         } else {
             $msg['msg'] = "Une erreur s'est produite lors de l'envoi"; 
             $msg['type'] = 'error';
-            /* if(empty($emailExpediteur)){
-                $msg['msg'] = "Veuillez rentrer votre adresse mail";
-                $msg['type'] = "error";
-            }
-            if(empty($_POST['emailDestinataire'])){
-                $msg['msg'] = "Veuillez rentrer";
-                $msg['type'] = "error";
-            }
-            if(empty($_FILES)){
-            $msg['msg'] = 'Heyyyy !';
-            // Message d'erreur si pas de $_POST */
         }
         return $msg;
     }
@@ -170,17 +153,14 @@ Class Transfer extends Model{
 
             //Recipients
             $mail->setFrom('b2pr2018c@outlook.fr', 'Mailer');
-            /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
             $mail->addAddress($emailDestinataire);               // Name is optional
 /*             $mail->addReplyTo('info@example.com', 'Information');*/
             if($checkbox == 1){
                 $mail->addCC('ludovic.r@codeur.online');
             }
-            /*$mail->addBCC('bcc@example.com'); */
 
             //Attachments
             $mail->addAttachment('file:///C:/wamp64/www/upfilez/logo_upfilez.png', 'logo_upfilez');       // Add attachments
-            /* $mail->addAttachment('/tmp/image.jpg', 'new.jpg');     */// Optional name
 
             //Content
             $mail->isHTML(true);                                  // Set email format to HTML
@@ -222,7 +202,7 @@ Class Transfer extends Model{
             </table>
             
             </html>";
-            $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+            $mail->AltBody = 'Vous avez reçu un fichier de la part de ' .$emailExpediteur.'.Récupérez votre fichier à l\'adresse suivante :'.$linkdownload . $id .'';
 
             $mail->send();
             $msg['msg'] = "Votre fichier a été envoyé !";
