@@ -53,10 +53,10 @@ Class Transfer extends Model{
 
                     $uploadOk = 1;
                     $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-
+                    
                     // Check la taille du fichier
                     if ($_FILES["fileUpload"]["size"] > 2147483648) {
-                        $msg['msg'] .= "Votre fichier est trop grand.";
+                        $msg['msg'] = "Votre fichier est trop grand.";
                         $msg['type'] = "error";
                         $uploadOk = 0;
                     }
@@ -117,6 +117,7 @@ Class Transfer extends Model{
             $msg['msg'] = 'Votre fichier a bien été envoyé !';
             $msg['type'] = "success";
             $msg['url'] = $id;
+            $msg['urlfile'] = $target_dir;
             Transfer::sendMailPHP();
 
             }
@@ -151,15 +152,15 @@ Class Transfer extends Model{
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
             $mail->SMTPAuth = true;                               // Enable SMTP authentication
-            $mail->Username = 'testb2pr@outlook.fr';                 // SMTP username
+            $mail->Username = 'b2pr2018c@outlook.fr';                 // SMTP username
             $mail->Password = 'azertY1234!';                           // SMTP password
             $mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
             $mail->Port = 587;                                    // TCP port to connect to
 
             //Recipients
-            $mail->setFrom('testb2pr@outlook.fr', 'Mailer');
+            $mail->setFrom('b2pr2018c@outlook.fr', 'Mailer');
             /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
-            $mail->addAddress('testb2pr@outlook.fr');               // Name is optional
+            $mail->addAddress('b2pr2018c@outlook.fr');               // Name is optional
 /*             $mail->addReplyTo('info@example.com', 'Information');
 */          /* $mail->addCC('cc@example.com');
             $mail->addBCC('bcc@example.com'); */
@@ -220,15 +221,17 @@ Class Transfer extends Model{
     }
 
     public static function linkFile($id){
-        
+
         $db = Database::getInstance();
         $sql = "SELECT * FROM `transfer` WHERE id = :id";
         $sth = $db->prepare($sql);
         $sth->setFetchMode(PDO::FETCH_ASSOC);
         $sth->bindValue(':id', $id, PDO::PARAM_INT);
         $sth->execute();
+        
         return $sth->fetch();
 
         $msg['url'] = $id;
+
     }
 }

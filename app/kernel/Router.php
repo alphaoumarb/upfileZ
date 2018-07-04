@@ -17,10 +17,12 @@ class Router {
             $parts = explode('/', $request);
             
 
-            if($parts[0] == 'download' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page de connexion
-                $result['controller']       = 'Download';
+            if($parts[0] == 'download' && $parts[1] != ''){ // Route vers la page de connexion
+                $result['controller']       = 'Transfer';
                 $result['action']           = 'download';
-            }/*  elseif($parts[0] == 'signup' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page d'inscription
+                $result['params']['id']     = intval($parts[1]);
+            }
+            /*  elseif($parts[0] == 'signup' && (count($parts) == 1 || $parts[1] == '')){ // Route vers la page d'inscription
                 $result['controller']       = 'User';
                 $result['action']           = 'signup';
             } elseif($parts[0] == 'logout' && (count($parts) == 1 || $parts[1] == '')){ // Deconnexion de l'utilisateur

@@ -23,6 +23,9 @@
                     {% if message != '' %}
                         <div class="{{ type }}">{{ message }}</div>
                     {% endif %}
+                    {% if id != '' %}
+                    <div><p>VOus pouvez retrouver le lien ici : {{ id }}</p></div>
+                    {% endif %}
                 </div>
             </div>
         </form>
