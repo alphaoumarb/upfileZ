@@ -47,7 +47,7 @@ Class Transfer extends Model{
                             $error++;
                             break;
                     }
-                    $fileUrl = "localhost/upfilez/app/assets/file_uploaded/" . basename($_FILES["fileUpload"]["name"]);
+                    $fileUrl = basename($_FILES["fileUpload"]["name"]);
                     $target_dir = ROOT . "/app/assets/file_uploaded/";
                     $target_file = $target_dir . basename($_FILES["fileUpload"]["name"]);
 
@@ -106,7 +106,17 @@ Class Transfer extends Model{
                 
     /*             Self::sendMailPHP(); */
             $db = Database::getInstance();
-            $sth = $db->prepare("INSERT INTO `transfer`(email_expediteur, email_destinataire, email_copie, url_file) VALUES ('$emailDestinataire', '".$emailExpediteur."', '".$checkbox."', '$fileUrl')");
+            $sth = $db->prepare("INSERT INTO `transfer`(
+                                    email_expediteur, 
+                                    email_destinataire, 
+                                    email_copie, 
+                                    url_file) VALUES (
+                                    :email_expediteur, 
+                                    :email_destinataire, 
+                                    :email_copie, 
+                                    :url_file)"
+                                );
+
             $sth->bindValue(':email_expediteur', $emailExpediteur, PDO::PARAM_STR);
             $sth->bindValue(':email_destinataire', $emailDestinataire, PDO::PARAM_STR);
             $sth->bindValue(':email_copie', $checkbox, PDO::PARAM_BOOL);
@@ -118,11 +128,10 @@ Class Transfer extends Model{
             $msg['type'] = "success";
             $msg['url'] = $id;
             $msg['urlfile'] = $target_dir;
-            Transfer::sendMailPHP();
+            $msg['file'] = $target_file;
+            Transfer::sendMailPHP($emailExpediteur, $emailDestinataire, $checkbox, $msg, $id);
 
             }
-            print_r($msg['type']);
-            print_r($msg['url']);
             
         } else {
             $msg['msg'] = "Une erreur s'est produite lors de l'envoi"; 
@@ -142,12 +151,14 @@ Class Transfer extends Model{
         return $msg;
     }
 
-    public static function sendMailPHP(){
+    public static function sendMailPHP($emailExpediteur, $emailDestinataire, $checkbox, $msg, $id){
         
         $mail = new PHPMailer(true);  
                                     // Passing `true` enables exceptions
         try {
             //Server settings
+            $linkdownload = "http://localhost/upfilez/download/";
+            $mail->CharSet = 'UTF-8';
             $mail->SMTPDebug = false;                                 // Enable verbose debug output
             $mail->isSMTP();                                      // Set mailer to use SMTP
             $mail->Host = 'smtp-mail.outlook.com';  // Specify main and backup SMTP servers
@@ -160,19 +171,21 @@ Class Transfer extends Model{
             //Recipients
             $mail->setFrom('b2pr2018c@outlook.fr', 'Mailer');
             /* $mail->addAddress('joe@example.net', 'Joe User'); */     // Add a recipient
-            $mail->addAddress('b2pr2018c@outlook.fr');               // Name is optional
-/*             $mail->addReplyTo('info@example.com', 'Information');
-*/          /* $mail->addCC('cc@example.com');
-            $mail->addBCC('bcc@example.com'); */
+            $mail->addAddress($emailDestinataire);               // Name is optional
+/*             $mail->addReplyTo('info@example.com', 'Information');*/
+            if($checkbox == 1){
+                $mail->addCC('ludovic.r@codeur.online');
+            }
+            /*$mail->addBCC('bcc@example.com'); */
 
             //Attachments
-            /* $mail->addAttachment('/var/tmp/file.tar.gz'); */         // Add attachments
+            $mail->addAttachment('file:///C:/wamp64/www/upfilez/logo_upfilez.png', 'logo_upfilez');       // Add attachments
             /* $mail->addAttachment('/tmp/image.jpg', 'new.jpg');     */// Optional name
 
             //Content
             $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = 'Here is the subject';
-            $mail->Body    = "<html lang='en'>
+            $mail->Subject = 'Vous avez reçu un fichier de la part de ' .$emailExpediteur;
+            $mail->Body    = "<html lang='fr'>
             <head>
             <meta charset='UTF-8'>
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
@@ -188,23 +201,22 @@ Class Transfer extends Model{
             <td><div style='background-color:
             #A243E8
             ; height: 100px; display: flex; flex-direction: column;'>
-            <img style='margin:auto;' src='logo_upfilez.jpg' alt='NOTRE LOGO'>
+            <img style='margin:auto;' src='cid:logo_upfilez' alt='logo_upfilez'>
             </div>
             </td>
             </tr>
             
             <tr>
-            <td align='center'><p style='font-family:helvetica; font-size:25px; color:#A243E8'>Ce code mail</p></td>
+            <td align='center'><p style='font-family:helvetica; font-size:25px; color:#A243E8'>$emailExpediteur</p></td>
             </tr>
             
             <tr>
-            <td align='center'><p style='font-family:helvetica; font-size:25px;'>vous a envoy&eacute; un fichier</p></td>
+            <td align='center'><p style='font-family:helvetica; font-size:25px;'>vous a envoyé un fichier</p></td>
             </tr>
             
             <tr>
-            <td align='center'><button style='height:50px; border:none; color:#fff; padding: 10px 15px 10px;background-color:
-            #A243E8
-            '>R&eacute;cup&eacute;rez vos fichiers</button></td>
+            <td align='center'><a href=".$linkdownload . $id . "><button style='height:50px; border:none; color:#fff; padding: 10px 15px 10px;background-color:
+            #A243E8'>Récupérez votre fichier</button></a></td>
             </tr>
             
             </table>

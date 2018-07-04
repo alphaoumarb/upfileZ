@@ -3,7 +3,7 @@
 class TransferController extends Controller
 {
     public function index(){
-        $message = ''; $type = ''; $id = ''; $path = '';    
+        $message = ''; $type = ''; $id = ''; $path=''; $file='';
 
         if(isset($_FILES['fileUpload'])){
             $msg = Transfer::fileUpload();
@@ -11,18 +11,18 @@ class TransferController extends Controller
             $message = $msg['msg'];
             $type = $msg['type'];
             $path = $msg['urlfile'];
+            $file = $msg['file'];
 
             try{
                 if($msg['type'] == 'success'){
                     $id = $msg['url'];
                     $linkFile = Transfer::linkFile($id);
-                    $path = $path . $id ;
-/*                     print_r($path);
- */                }
+                    $path = $msg['url'];
+                }
             }
-                catch(\Exception $e){
-                    echo $e->getMessage(); 
-                }        
+            catch(\Exception $e){
+                echo $e->getMessage(); 
+            }        
         } 
 
         $template = $this->twig->loadTemplate('/Page/index.html.twig');
@@ -34,11 +34,14 @@ class TransferController extends Controller
     }
 
     public function download(){
-        $id = $this->route["params"]["id"];
+        $id = $this->route['params']['id'];
 
-        $template = $this->twig->loadTemplate('/Page/download.html.twig');
+        $linkFile = Transfer::linkFile($id);  
+        
+        $template = $this->twig->loadTemplate('/page/download.html.twig');
         echo $template->render(array(
-            'id'        => $path
+            'file'        =>  $linkFile
+
         ));
     
     }
